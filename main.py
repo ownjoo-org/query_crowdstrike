@@ -2,10 +2,17 @@ import argparse
 import json
 
 from requests import Session, Response
-from typing import Optional
+from typing import List, Optional
 
 
-def main(domain: str, client_id: str, client_secret: str, query_filter: str, proxies: Optional[dict] = None):
+def main(
+        domain: str,
+        client_id: str,
+        client_secret: str,
+        query_filter: str,
+        proxies: Optional[dict] = None,
+        get_vulns: bool = False,
+):
     session = Session()
 
     headers: dict = {
@@ -64,9 +71,35 @@ def main(domain: str, client_id: str, client_secret: str, query_filter: str, pro
         for resource in resources:
             device = resource
         print(f'device: {device}')
-        return device
     except Exception as exc_entity:
         print(f'{exc_entity}')
+
+    # query for vulns data
+    if get_vulns:
+        vulnerabilities: list = []
+        try:
+            query_filters: List[str] = [f'aid:\'{aid}\'']
+            url_params: dict = {
+                'filter': '+'.join(query_filters),
+                # 'limit': 1,
+                # 'facet': ['cve', 'remediation'],
+            }
+            resp_entity: Response = session.get(
+                url=f'https://{domain}/spotlight/combined/vulnerabilities/v1',
+                params=url_params,
+                headers=headers,
+                proxies=proxies,
+            )
+            resp_entity.raise_for_status()
+            data_entity: dict = resp_entity.json()
+            resources: list = data_entity.get('resources')
+            for resource in resources:
+                vulnerabilities.append(resource)
+            print(f'device: {device}')
+            device['vulnerabilities'] = vulnerabilities
+        except Exception as exc_entity:
+            print(f'{exc_entity}')
+    return device
 
 
 if __name__ == '__main__':
@@ -112,6 +145,13 @@ if __name__ == '__main__':
         help="JSON structure specifying 'http' and 'https' proxy URLs",
         required=False,
     )
+    parser.add_argument(
+        '--vulns',
+        type=bool,
+        help="Get vulnerabilities for the specified host",
+        default=False,
+        required=False,
+    )
     args = parser.parse_args()
 
     query_filter: str = ''
@@ -125,10 +165,14 @@ if __name__ == '__main__':
         client_id=args.client_id,
         client_secret=args.client_secret,
         query_filter=query_filter,
-        proxies=json.loads(args.proxies)
+        proxies=json.loads(args.proxies),
+        get_vulns=args.vulns,
     )
 
     if device:
+        vulnerabilities: list = device.get('vulnerabilities')
+        if vulnerabilities and isinstance(vulnerabilities, list):
+            print(f'vulns count: {len(vulnerabilities)}')
         print(f'device info: {device or ""}')
     else:
         print('No devices found')
