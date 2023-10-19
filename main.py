@@ -84,15 +84,15 @@ def main(
                 # 'limit': 1,
                 # 'facet': ['cve', 'remediation'],
             }
-            resp_entity: Response = session.get(
+            resp_vuln: Response = session.get(
                 url=f'https://{domain}/spotlight/combined/vulnerabilities/v1',
                 params=url_params,
                 headers=headers,
                 proxies=proxies,
             )
-            resp_entity.raise_for_status()
-            data_entity: dict = resp_entity.json()
-            resources: list = data_entity.get('resources')
+            resp_vuln.raise_for_status()
+            data_vuln: dict = resp_vuln.json()
+            resources: list = data_vuln.get('resources')
             for resource in resources:
                 vulnerabilities.append(resource)
             print(f'device: {device}')
