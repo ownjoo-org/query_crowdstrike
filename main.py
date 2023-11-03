@@ -160,12 +160,19 @@ if __name__ == '__main__':
     elif args.filter:
         query_filter = args.filter
 
+    proxies: Optional[dict] = None
+    if proxies:
+        try:
+            proxies: dict = json.loads(args.proxies)
+        except Exception as exc_json:
+            print(f'WARNING: failure parsing proxies: {exc_json}: proxies provided: {proxies}')
+
     device = main(
         domain=args.domain,
         client_id=args.client_id,
         client_secret=args.client_secret,
         query_filter=query_filter,
-        proxies=json.loads(args.proxies),
+        proxies=proxies,
         get_vulns=args.vulns,
     )
 
