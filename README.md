@@ -1,5 +1,9 @@
 # query_crowdstrike
-test query for crowdstrike API host
+test query for crowdstrike API:<br>
+* look up a single host by hostname `--hostname HOST`
+* look up vulnerabilities by hostname `--hostname HOST --list-vulns`
+* look up any host(s) by FQL filter `--filter`
+* list custom RTR scripts' details
 
 # usage
 ```
