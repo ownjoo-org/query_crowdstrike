@@ -2,7 +2,7 @@ import argparse
 import json
 
 from requests import Session, Response
-from typing import List, Optional
+from typing import List, Optional, Union
 
 
 def main(
@@ -13,7 +13,7 @@ def main(
         proxies: Optional[dict] = None,
         list_vulns: bool = False,
         list_scripts: bool = False,
-):
+) -> Union[None, str, list, dict]:
     session = Session()
 
     headers: dict = {
@@ -55,7 +55,7 @@ def main(
             resources: list = data_query.get('resources')
             for resource in resources:
                 aid = resource
-            print(f'id: {aid}')
+            # print(f'id: {aid}')
         except Exception as exc_query:
             print(f'{exc_query}')
 
@@ -97,7 +97,6 @@ def main(
                 resources: list = data_vuln.get('resources')
                 for resource in resources:
                     vulnerabilities.append(resource)
-                print(f'device: {device}')
                 device['vulnerabilities'] = vulnerabilities
             except Exception as exc_entity:
                 print(f'{exc_entity}')
@@ -120,6 +119,7 @@ def main(
             print(f'{exc_query}')
 
         # query for scripts details
+        resources: Optional[list] = None
         try:
             resp_entity: Response = session.get(
                 url=f'https://{domain}/real-time-response/entities/scripts/v2',
@@ -130,9 +130,9 @@ def main(
             resp_entity.raise_for_status()
             data_entity: dict = resp_entity.json()
             resources: list = data_entity.get('resources')
-            print(json.dumps(resources, indent=4))
         except Exception as exc_entity:
             print(f'{exc_entity}')
+        return resources
 
 
 if __name__ == '__main__':
@@ -212,7 +212,7 @@ if __name__ == '__main__':
         except Exception as exc_json:
             print(f'WARNING: failure parsing proxies: {exc_json}: proxies provided: {proxies}')
 
-    device = main(
+    result = main(
         domain=args.domain,
         client_id=args.client_id,
         client_secret=args.client_secret,
@@ -222,10 +222,11 @@ if __name__ == '__main__':
         list_scripts=args.list_scripts,
     )
 
-    if device:
-        vulnerabilities: list = device.get('vulnerabilities')
-        if vulnerabilities and isinstance(vulnerabilities, list):
-            print(f'vulns count: {len(vulnerabilities)}')
-        print(f'device info: {device or ""}')
+    if result:
+        if args.list_vulns:
+            vulnerabilities: list = result.get('vulnerabilities')
+            if vulnerabilities and isinstance(vulnerabilities, list):
+                print(f'vulns count: {len(vulnerabilities)}')
+        print(json.dumps(result, indent=4))
     else:
-        print('No devices found')
+        print('No results found')
