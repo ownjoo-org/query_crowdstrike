@@ -72,7 +72,7 @@ def main(
             resources: list = data_entity.get('resources')
             for resource in resources:
                 device = resource
-            print(f'device: {device}')
+            # print(f'device: {device}')
         except Exception as exc_entity:
             print(f'{exc_entity}')
 
