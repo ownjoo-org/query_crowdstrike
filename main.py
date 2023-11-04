@@ -23,30 +23,23 @@ def main(
     aid: Optional[str] = None
     device: Optional[dict] = None
 
-    print(f'domain: {domain}')
-    print(f'client_id: {client_id}')
-    print(f'client_secret: {client_secret}')
-    print(f'query_filter: {query_filter}')
-    print(f'proxies: {proxies}')
-    print(f'list_vulns: {list_vulns}')
-    print(f'list_scripts: {list_scripts}')
     # authenticate
-    # try:
-    #     body_params = {
-    #         'client_id': client_id,
-    #         'client_secret': client_secret,
-    #     }
-    #     resp_auth: Response = session.post(
-    #         url=f'https://{domain}/oauth2/token',
-    #         data=body_params,
-    #         proxies=proxies,
-    #     )
-    #     resp_auth.raise_for_status()
-    #     data_auth: dict = resp_auth.json()
-    #     token = data_auth.get('access_token')
-    #     headers['Authorization'] = f'Bearer {token}'
-    # except Exception as exc_auth:
-    #     print(f'{exc_auth}')
+    try:
+        body_params = {
+            'client_id': client_id,
+            'client_secret': client_secret,
+        }
+        resp_auth: Response = session.post(
+            url=f'https://{domain}/oauth2/token',
+            data=body_params,
+            proxies=proxies,
+        )
+        resp_auth.raise_for_status()
+        data_auth: dict = resp_auth.json()
+        token = data_auth.get('access_token')
+        headers['Authorization'] = f'Bearer {token}'
+    except Exception as exc_auth:
+        print(f'{exc_auth}')
 
     if query_filter:
         # query for agent ID
