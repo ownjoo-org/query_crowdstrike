@@ -13,6 +13,7 @@ def main(
         proxies: Optional[dict] = None,
         list_vulns: bool = False,
         list_scripts: bool = False,
+        use_discover: bool = False,
 ) -> Union[None, str, list, dict]:
     session = Session()
 
@@ -44,8 +45,11 @@ def main(
     if query_filter:
         # query for agent ID
         try:
+            query_url: str = f'https://{domain}/devices/queries/devices/v1'
+            if use_discover:
+                query_url = f'https://{domain}/discover/queries/hosts/v1'
             resp_query: Response = session.get(
-                url=f'https://{domain}/devices/queries/devices/v1',
+                url=query_url,
                 params={'filter': query_filter},
                 headers=headers,
                 proxies=proxies,
@@ -61,8 +65,11 @@ def main(
 
         # query for device data
         try:
+            entities_url: str = f'https://{domain}/devices/entities/devices/v1'
+            if use_discover:
+                entities_url = f'https://{domain}/discover/entities/hosts/v1'
             resp_entity: Response = session.get(
-                url=f'https://{domain}/devices/entities/devices/v1',
+                url=entities_url,
                 params={'ids': aid},
                 headers=headers,
                 proxies=proxies,
@@ -154,6 +161,13 @@ if __name__ == '__main__':
         dest='client_secret',
     )
     parser.add_argument(
+        '--discover',
+        default=None,
+        type=bool,
+        required=False,
+        help='use Discover endpoints',
+    )
+    parser.add_argument(
         '--hostname',
         default=None,
         type=str,
@@ -220,6 +234,7 @@ if __name__ == '__main__':
         proxies=proxies,
         list_vulns=args.list_vulns,
         list_scripts=args.list_scripts,
+        use_discover=args.discover or False,
     )
 
     if result:

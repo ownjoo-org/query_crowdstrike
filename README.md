@@ -21,6 +21,7 @@ options:
   --proxies PROXIES              JSON structure specifying 'http' and 'https' proxy URLs
   --list-vulns                   Get vulnerabilities for the specified host
   --list-scripts                 List RTR custom scripts details
+  --discover                     Query Falcon Discover endpoints instead of regular Falcon
 ```
 
 
