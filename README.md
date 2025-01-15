@@ -7,8 +7,8 @@ test query for crowdstrike API:<br>
 
 # usage
 ```
-$ python main.py --help
-usage: main.py [-h] --client-id CLIENT_ID --client-secret CLIENT_SECRET [--hostname HOSTNAME] [--filter FILTER] [--domain DOMAIN] [--proxies PROXIES]
+$ python query_cs.py --help
+usage: query_cs.py [-h] --client-id CLIENT_ID --client-secret CLIENT_SECRET [--hostname HOSTNAME] [--filter FILTER] [--domain DOMAIN] [--proxies PROXIES]
                [--list-vulns] [--list-scripts]
 
 options:
@@ -26,8 +26,8 @@ options:
 
 
 # example: look up host with vulnerability details
-`python3 main.py --domain api.crowdstrike.com --client-id blah --client-secret blah --hostname abc123 --list-vulns`
+`python3 query_cs.py --domain api.crowdstrike.com --client-id blah --client-secret blah --hostname abc123 --list-vulns`
 
 # example: list all custom scripts
-`python3 main.py --domain api.crowdstrike.com --client-id blah --client-secret blah --list-scripts`
+`python3 query_cs.py --domain api.crowdstrike.com --client-id blah --client-secret blah --list-scripts`
 
