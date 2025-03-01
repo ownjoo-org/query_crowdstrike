@@ -45,7 +45,7 @@ def main(
     if query_filter:
         # query for agent ID
         try:
-            query_url: str = f'https://{domain}/devices/queries/devices/v1'
+            query_url: str = f'https://{domain}/devices/queries/devices/v2'
             if use_discover:
                 query_url = f'https://{domain}/discover/queries/hosts/v1'
             resp_query: Response = session.get(
@@ -65,7 +65,7 @@ def main(
 
         # query for device data
         try:
-            entities_url: str = f'https://{domain}/devices/entities/devices/v1'
+            entities_url: str = f'https://{domain}/devices/entities/devices/v2'
             if use_discover:
                 entities_url = f'https://{domain}/discover/entities/hosts/v1'
             resp_entity: Response = session.get(
